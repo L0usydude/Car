@@ -6,8 +6,11 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 public class Analyze {
 
@@ -15,7 +18,10 @@ public class Analyze {
     private static final String DELIMITER = ",";
     public static void main(String[] args) {
         try {
-            for (Car i: toCar(analyzer())) {
+            List<String> rawInfo = analyzer();
+            List<Car> toCars = toCar(rawInfo);
+            Map<CarMaker,List<Car>> map1 = fornat(toCars, Car::getCarmaker);
+            for (var i: map1.values()) {
                 System.out.println(i);
             }
         } catch (IOException e) {
@@ -48,4 +54,21 @@ public class Analyze {
         return res;
     }
 
+
+//    static Map<String, List<Car>> toMap(List<Car> cars){
+//        Map<String, List<Car>> res = cars.stream().
+//                collect(Collectors.groupingBy(Car::getColor));
+//        return res;
+//    }
+//
+//    static Map<CarMaker, List<Car>> toCarMaker(List<Car> cars) {
+//        Map<CarMaker, List<Car>> res = cars.stream().
+//                collect(Collectors.groupingBy(Car::getCarmaker));
+//        return res;
+//    }
+
+    static <T> Map<T, List<Car>> fornat(List<Car> cars, Function<Car,T> function){
+        return cars.stream().
+                collect(Collectors.groupingBy(function));
+    }
 }
