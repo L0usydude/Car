@@ -20,7 +20,8 @@ public class Analyze {
         try {
             List<String> rawInfo = analyzer();
             List<Car> toCars = toCar(rawInfo);
-            Map<CarMaker,List<Car>> map1 = fornat(toCars, Car::getCarmaker);
+            Map<CarMaker,List<Car>> map1 = format(toCars, Car::getCarmaker);
+            List<CarMaker> toCarMakers = toCarMakersList(map1);
             for (var i: map1.values()) {
                 System.out.println(i);
             }
@@ -29,7 +30,8 @@ public class Analyze {
         }
     }
     static List<String> analyzer() throws IOException {
-        return Files.lines(Paths.get(PATH)).skip(1).toList();
+//        return Files.lines(Paths.get(PATH)).skip(1).filter(i -> (i.charAt(i.indexOf(',') + 1) != ',')).toList();
+        return Files.lines(Paths.get(PATH)).skip(1).filter(i -> (!"".equals(i.split(DELIMITER)[1]))).toList();
     }
     static List<Car> toCar(List<String> a)
     {
@@ -53,6 +55,9 @@ public class Analyze {
         });
         return res;
     }
+    static List<CarMaker> higherThan2(Map<CarMaker, List<Car>> a){
+        return format(a.values().stream().filter(str -> (str.size() > 2)).toList()).keySet().stream().toList()
+    }
 
 
 //    static Map<String, List<Car>> toMap(List<Car> cars){
@@ -67,8 +72,13 @@ public class Analyze {
 //        return res;
 //    }
 
-    static <T> Map<T, List<Car>> fornat(List<Car> cars, Function<Car,T> function){
+    static <T> Map<T, List<Car>> format(List<Car> cars, Function<Car,T> function){
         return cars.stream().
                 collect(Collectors.groupingBy(function));
+    }
+
+    static List<CarMaker> toCarMakersList(Map<CarMaker, List<Car>> a){
+        return a.keySet().stream().
+                toList();
     }
 }
