@@ -22,9 +22,8 @@ public class Analyze {
             List<Car> toCars = toCar(rawInfo);
             Map<CarMaker,List<Car>> map1 = format(toCars, Car::getCarmaker);
             List<CarMaker> toCarMakers = toCarMakersList(map1);
-            for (var i: map1.values()) {
-                System.out.println(i);
-            }
+            List<CarMaker> a = higherThan2(map1);
+            int i = 0;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,8 +55,12 @@ public class Analyze {
         return res;
     }
     static List<CarMaker> higherThan2(Map<CarMaker, List<Car>> a){
-        return format(a.values().stream().filter(str -> (str.size() > 2)).toList()).keySet().stream().toList()
+        List<Car> cars = new ArrayList<>();
+        a.values().stream().filter(str -> (str.size() > 2)).forEach(carList -> cars.addAll(carList));
+        return format(cars, Car::getCarmaker).keySet().stream().toList();
+
     }
+
 
 
 //    static Map<String, List<Car>> toMap(List<Car> cars){
